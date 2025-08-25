@@ -51,7 +51,7 @@ const UserProfile = () => {
   const [achievements, setAchievements] = useState([]);
   const [posts, setPosts] = useState([]);
   const [username, setUsername] = useState(routeUsername); // Added state for username
-
+// checking the changes
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
