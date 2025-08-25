@@ -52,3 +52,4 @@ const ComingSoon = ({ feature, description, icon: Icon = Rocket }) => {
 };
 
 export default ComingSoon; 
+//update

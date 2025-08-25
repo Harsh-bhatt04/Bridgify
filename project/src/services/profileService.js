@@ -109,3 +109,4 @@ export const getAchievements = async (username) => {
         throw new Error(error.message || 'Failed to fetch achievements');
     }
 }; 
+//update
