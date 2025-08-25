@@ -54,7 +54,7 @@ const UserProfile = () => {
   const [posts, setPosts] = useState([]);
   const [username, setUsername] = useState(routeUsername);
 
-  // For file upload
+  // // For file upload
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [cacheBust, setCacheBust] = useState(0); // force image refresh after upload
@@ -105,112 +105,215 @@ const UserProfile = () => {
     }
   };
 
+  // useEffect(() => {
+  //   const fetchProfileData = async () => {
+  //     try {
+  //       setLoading(true);
+  //       setError(null);
+
+  //       const token = localStorage.getItem("token");
+  //       if (!token) {
+  //         navigate("/login");
+  //         return;
+  //       }
+
+  //       let userToFetch = routeUsername;
+  //       if (!userToFetch) {
+  //         try {
+  //           const decoded = jwtDecode(token);
+  //           userToFetch = decoded.username;
+  //           setUsername(decoded.username);
+  //         } catch (error) {
+  //           console.error("Error decoding token:", error);
+  //           localStorage.removeItem("token");
+  //           navigate("/login");
+  //           return;
+  //         }
+  //       }
+
+  //       const headers = {
+  //         Authorization: `Bearer ${token}`,
+  //         "Content-Type": "application/json",
+  //       };
+
+  //       // Fetch user profile
+  //       const userResponse = await fetch(`${API_BASE}/api/profile/${userToFetch}`, {
+  //         headers,
+  //       });
+
+  //       if (userResponse.status === 401) {
+  //         localStorage.removeItem("token");
+  //         navigate("/login");
+  //         return;
+  //       }
+
+  //       if (!userResponse.ok) {
+  //         throw new Error(`Failed to fetch user profile: ${userResponse.status}`);
+  //       }
+
+  //       const profileData = await userResponse.json();
+  //       if (!profileData) throw new Error("No profile data received from server");
+
+  //       setUserData(profileData);
+  //       setUsername(profileData.username);
+
+  //       // Fetch posts
+  //       const postsResponse = await fetch(`${API_BASE}/posts/user/${userToFetch}`, {
+  //         headers,
+  //       });
+  //       if (postsResponse.ok) {
+  //         const postsData = await postsResponse.json();
+  //         setPosts(postsData);
+  //       }
+
+  //       // Fetch GitHub activity
+  //       try {
+  //         const githubResponse = await fetch(
+  //           `${API_BASE}/api/profile/${userToFetch}/github`,
+  //           { headers }
+  //         );
+  //         if (githubResponse.ok) {
+  //           const githubActivity = await githubResponse.json();
+  //           setGithubData(githubActivity.activity || []);
+  //         }
+  //       } catch (e) {
+  //         console.error("Github fetch error", e);
+  //         setGithubData([]);
+  //       }
+
+  //       // Fetch achievements
+  //       try {
+  //         const achievementsResponse = await fetch(
+  //           `${API_BASE}/api/profile/${userToFetch}/achievements`,
+  //           { headers }
+  //         );
+  //         if (achievementsResponse.ok) {
+  //           const achievementsData = await achievementsResponse.json();
+  //           const mappedAchievements = (achievementsData.achievements || []).map(
+  //             (achievement) => ({
+  //               ...achievement,
+  //               Icon: iconMap[achievement.icon] || Star,
+  //             })
+  //           );
+  //           setAchievements(mappedAchievements);
+  //         }
+  //       } catch (e) {
+  //         console.error("Achievements fetch error", e);
+  //         setAchievements([]);
+  //       }
+  //     } catch (err) {
+  //       console.error("Error in fetchProfileData:", err);
+  //       setError(err.message || "Failed to fetch profile data");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchProfileData();
+  // }, [routeUsername, navigate]);
+
   useEffect(() => {
-    const fetchProfileData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+  const fetchProfileData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-        const token = localStorage.getItem("token");
-        if (!token) {
-          navigate("/login");
-          return;
-        }
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
 
-        let userToFetch = routeUsername;
-        if (!userToFetch) {
-          try {
-            const decoded = jwtDecode(token);
-            userToFetch = decoded.username;
-            setUsername(decoded.username);
-          } catch (error) {
-            console.error("Error decoding token:", error);
-            localStorage.removeItem("token");
-            navigate("/login");
-            return;
-          }
-        }
-
-        const headers = {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        };
-
-        // Fetch user profile
-        const userResponse = await fetch(`${API_BASE}/api/profile/${userToFetch}`, {
-          headers,
-        });
-
-        if (userResponse.status === 401) {
+      let userId = routeUsername; // ⚡ route now contains userId, not username
+      if (!userId) {
+        try {
+          const decoded = jwtDecode(token);
+          console.log(decoded)
+          userId = decoded.userId;   // ⚡ decode id from token
+          setUsername(decoded.username);
+        } catch (error) {
+          console.error("Error decoding token:", error);
           localStorage.removeItem("token");
           navigate("/login");
           return;
         }
-
-        if (!userResponse.ok) {
-          throw new Error(`Failed to fetch user profile: ${userResponse.status}`);
-        }
-
-        const profileData = await userResponse.json();
-        if (!profileData) throw new Error("No profile data received from server");
-
-        setUserData(profileData);
-        setUsername(profileData.username);
-
-        // Fetch posts
-        const postsResponse = await fetch(`${API_BASE}/posts/user/${userToFetch}`, {
-          headers,
-        });
-        if (postsResponse.ok) {
-          const postsData = await postsResponse.json();
-          setPosts(postsData);
-        }
-
-        // Fetch GitHub activity
-        try {
-          const githubResponse = await fetch(
-            `${API_BASE}/api/profile/${userToFetch}/github`,
-            { headers }
-          );
-          if (githubResponse.ok) {
-            const githubActivity = await githubResponse.json();
-            setGithubData(githubActivity.activity || []);
-          }
-        } catch (e) {
-          console.error("Github fetch error", e);
-          setGithubData([]);
-        }
-
-        // Fetch achievements
-        try {
-          const achievementsResponse = await fetch(
-            `${API_BASE}/api/profile/${userToFetch}/achievements`,
-            { headers }
-          );
-          if (achievementsResponse.ok) {
-            const achievementsData = await achievementsResponse.json();
-            const mappedAchievements = (achievementsData.achievements || []).map(
-              (achievement) => ({
-                ...achievement,
-                Icon: iconMap[achievement.icon] || Star,
-              })
-            );
-            setAchievements(mappedAchievements);
-          }
-        } catch (e) {
-          console.error("Achievements fetch error", e);
-          setAchievements([]);
-        }
-      } catch (err) {
-        console.error("Error in fetchProfileData:", err);
-        setError(err.message || "Failed to fetch profile data");
-      } finally {
-        setLoading(false);
       }
-    };
 
-    fetchProfileData();
-  }, [routeUsername, navigate]);
+      const headers = {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      };
+
+      // ✅ Fetch user profile using ID
+      const userResponse = await fetch(`${API_BASE}/api/profile/${userId}`, {
+        headers,
+      });
+      console.log(userResponse)
+      if (userResponse.status === 401) {
+        localStorage.removeItem("token");
+        navigate("/login");
+        return;
+      }
+
+      if (!userResponse.ok) {
+        throw new Error(`Failed to fetch user profile: ${userResponse.status}`);
+      }
+
+      const profileData = await userResponse.json();
+      if (!profileData) throw new Error("No profile data received from server");
+
+      setUserData(profileData.profile); // server returns { success, profile, posts }
+      setUsername(profileData.profile.username);
+
+      // ✅ Posts come directly from profileData now
+      setPosts(profileData.posts || []);
+
+      // Fetch GitHub activity
+      // try {
+      //   const githubResponse = await fetch(
+      //     `${API_BASE}/api/profile/${profileData.profile.username}/github`,
+      //     { headers }
+      //   );
+      //   if (githubResponse.ok) {
+      //     const githubActivity = await githubResponse.json();
+      //     setGithubData(githubActivity.activity || []);
+      //   }
+      // } catch (e) {
+      //   console.error("Github fetch error", e);
+      //   setGithubData([]);
+      // }
+
+      // Fetch achievements
+      // try {
+      //   const achievementsResponse = await fetch(
+      //     `${API_BASE}/api/profile/${profileData.profile.username}/achievements`,
+      //     { headers }
+      //   );
+      //   if (achievementsResponse.ok) {
+      //     const achievementsData = await achievementsResponse.json();
+      //     const mappedAchievements = (achievementsData.achievements || []).map(
+      //       (achievement) => ({
+      //         ...achievement,
+      //         Icon: iconMap[achievement.icon] || Star,
+      //       })
+      //     );
+      //     setAchievements(mappedAchievements);
+      //   }
+      // } catch (e) {
+      //   console.error("Achievements fetch error", e);
+      //   setAchievements([]);
+      // }
+    } catch (err) {
+      console.error("Error in fetchProfileData:", err);
+      setError(err.message || "Failed to fetch profile data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchProfileData();
+}, [routeUsername, navigate]);
+
 
   // Helper: build absolute URL for stored relative paths like "/uploads/xxxx.jpg"
  const getProfileImgSrc = () => {

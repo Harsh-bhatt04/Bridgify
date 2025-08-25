@@ -45,29 +45,29 @@ const Sidebar = ({ isDarkMode, toggleDarkMode }) => {
         setIsLoading(true);
         console.log("Fetching current user...");
 
-        let username;
+        let userId;
         try {
           const decoded = jwtDecode(token);
-          username = decoded.username;
-          console.log(decoded)
+          userId = decoded.id;
+          // console.log(decoded)
         } catch (err) {
           console.error('Invalid token', err);
           return;
         }
 
-        const res = await fetch(`http://localhost:8000/api/profile/${username}`, {
+        const res = await fetch(`http://localhost:8000/api/profile/${userId}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           }
         });
-        // console.log(res.status);
 
         if (res.ok) {
           const data = await res.json();
-          // console.log(data);
+          console.log(data);
           
           setFetchedUser({
+            id : data.profile._id,
             name: data.profile.username,
             email: data.profile.email,
             // avatar: data.profile.profileImage || 'https://i.pravatar.cc/150?img=3',
@@ -93,7 +93,7 @@ const Sidebar = ({ isDarkMode, toggleDarkMode }) => {
   }, [user]);
 
   const currentUser = user || fetchedUser;
-  // console.log(currentUser.name)
+  console.log(currentUser?.id)
 if (isLoading) {
   return <div className="p-4">Loading user...</div>;
 }
@@ -218,7 +218,7 @@ if (!currentUser) {
   };
     // console.log(currentUser.username)
   const handleProfileClick = () => {
-    navigate(`/profile/${currentUser.name}`);
+    navigate(`/profile/${currentUser?.id}`);
     setIsProfileMenuOpen(false);
   };
 

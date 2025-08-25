@@ -13,48 +13,50 @@ const verifyToken = (token) => {
 
 // Get user profile by username
 export const getUserProfile = async (req, res) => {
-    try {
-        const { username } = req.params;
-        console.log(username);
-        console.log('Looking for user with username:', username);
-        
-        // Find user profile
-        const userProfile = await User.findOne({ username })
-            .populate('followers', 'username profileImage')
-            .populate('following', 'username profileImage');
-        
-        if (!userProfile) {
-            console.log('User profile not found for username:', username);
-            return res.status(404).json({ 
-                success: false,
-                message: 'User profile not found' 
-            });
-        }
+  try {
+    const { id } = req.params; // 👈 now expecting :id in the route
+    console.log("Looking for user with id:", id);
 
-        console.log('Found user profile:', userProfile);
-        // Get user's posts
-        const posts = await Post.find({ userId: userProfile._id })
-            .sort({ createdAt: -1 })
-            .populate('userId', 'username profileImage');
+    // Find user profile by ID
+    const userProfile = await User.findById(id)
+      .populate("followers", "username profileImage")
+      .populate("following", "username profileImage");
 
-        res.status(200).json({
-            success: true,
-            profile: {
-                ...userProfile.toObject(),
-                profilePicture: userProfile.profileImage,
-                about: userProfile.bio
-            },
-            posts
-        });
-    } catch (error) {
-        console.error('Error in getUserProfile:', error);
-        res.status(500).json({ 
-            success: false,
-            message: 'Internal server error',
-            error: process.env.NODE_ENV === 'development' ? error.message : undefined
-        });
+    if (!userProfile) {
+      console.log("User profile not found for id:", id);
+      return res.status(404).json({
+        success: false,
+        message: "User profile not found",
+      });
     }
+
+    console.log("Found user profile:", userProfile);
+
+    // Get user's posts
+    const posts = await Post.find({ userId: userProfile._id })
+      .sort({ createdAt: -1 })
+      .populate("userId", "username profileImage");
+
+    res.status(200).json({
+      success: true,
+      profile: {
+        ...userProfile.toObject(),
+        profilePicture: userProfile.profileImage,
+        about: userProfile.bio,
+      },
+      posts,
+    });
+  } catch (error) {
+    console.error("Error in getUserProfile:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error:
+        process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
+  }
 };
+
 
 // Update user profile
 export const updateUserProfile = async (req, res) => {
