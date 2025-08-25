@@ -36,7 +36,7 @@ app.use('/comments', commentRoutes);
 app.use('/api/follow', followRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/profile', profileRoutes);
-
+//new git added now you check here
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
