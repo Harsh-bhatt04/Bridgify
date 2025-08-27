@@ -105,3 +105,4 @@ export const like = async (req, res) => {
         res.status(500).json({ error: "Failed to like post" });
     }
 };
+//update

@@ -12,3 +12,4 @@ router.put('/:id', verifyToken, updatePost); // Protect this route
 //router.delete('/:id', checkAuth, deletePost); // Protect this route
 router.post('/:postId/like', checkAuth, likePost);
 export default router;
+//update

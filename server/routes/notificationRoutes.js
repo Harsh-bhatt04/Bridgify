@@ -25,3 +25,4 @@ router.patch('/:notificationId/read', markNotificationAsRead);
 router.patch('/read-all', markAllNotificationsAsRead);
 
 export default router; 
+//update

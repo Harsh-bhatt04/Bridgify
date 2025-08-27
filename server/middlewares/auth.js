@@ -24,3 +24,4 @@ export async function checkAuth(req,res,next){
     req.user = user
     next()
 }
+//update

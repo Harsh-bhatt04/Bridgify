@@ -8,3 +8,4 @@ router.post('/', checkAuth, createComment);
 router.get('/:postId', getCommentsByPost); 
 
 export default router;
+//update
