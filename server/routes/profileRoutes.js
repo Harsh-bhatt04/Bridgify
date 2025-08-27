@@ -4,7 +4,7 @@ import profileController from '../controllers/profileController.js';
 import { verifyToken } from '../middlewares/authMiddleware.js';
 
 // Get user profile
-router.get('/:username', profileController.getUserProfile);
+router.get('/:id', profileController.getUserProfile);
 
 // Update user profile (protected route)
 router.put('/:username', verifyToken, profileController.updateUserProfile);
