@@ -68,14 +68,18 @@ const UserProfile = () => {
 
     const token = localStorage.getItem("token");
     if (!token) return alert("You must be logged in.");
-
+    const decoded = jwtDecode(token);
+    console.log(decoded)
+    let userId = decoded.id;
+    console.log("Uploading for userId:", userId);
     const formData = new FormData();
-    formData.append("profileImage", selectedFile);
+    formData.append("profilePic", selectedFile);
+    formData.append("id", userId);
 
     try {
       setUploading(true);
-      const res = await axios.put(
-        `${API_BASE}/api/user/profile-image`,
+      const res = await fetch(
+        `${API_BASE}/api/profile/upload-profile-pic`,
         formData,
         {
           headers: {
@@ -84,8 +88,9 @@ const UserProfile = () => {
           },
         }
       );
-
+      console.log("response received :" ,res);
       if (res.data.success) {
+         const newImage = res.data.user.profileImage;
         setUserData((prev) => ({ ...prev, profileImage: res.data.profileImage }));
 
         // 🔹 persist to localStorage
