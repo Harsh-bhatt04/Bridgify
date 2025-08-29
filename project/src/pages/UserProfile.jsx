@@ -63,52 +63,102 @@ const UserProfile = () => {
     setSelectedFile(e.target.files[0]);
   };
 
+  // const handleUpload = async () => {
+  //   if (!selectedFile) return alert("Please choose a file");
+
+  //   const token = localStorage.getItem("token");
+  //   if (!token) return alert("You must be logged in.");
+  //   const decoded = jwtDecode(token);
+  //   console.log(decoded)
+  //   let userId = decoded.id;
+  //   console.log("Uploading for userId:", userId);
+  //   const formData = new FormData();
+  //   formData.append("profilePic", selectedFile);
+  //   formData.append("id", userId);
+
+  //   try {
+  //     setUploading(true);
+  //     const res = await fetch(
+  //       `${API_BASE}/api/profile/upload-profile-pic`,
+  //       formData,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //           "Content-Type": "multipart/form-data",
+  //         },
+  //       }
+  //     );
+  //     console.log("response received :" ,res);
+  //     if (res.data.success) {
+  //        const newImage = res.data.user.profileImage;
+  //       setUserData((prev) => ({ ...prev, profileImage: res.data.profileImage }));
+
+  //       // 🔹 persist to localStorage
+  //       const storedUser = JSON.parse(localStorage.getItem("user")) || {};
+  //       storedUser.profileImage = res.data.profileImage;
+  //       localStorage.setItem("user", JSON.stringify(storedUser));
+
+  //       setSelectedFile(null);
+  //       setCacheBust(Date.now());
+  //       alert("Profile picture updated!");
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //     alert("Error uploading profile picture");
+  //   } finally {
+  //     setUploading(false);
+  //   }
+  // };
+
   const handleUpload = async () => {
-    if (!selectedFile) return alert("Please choose a file");
+  if (!selectedFile) return alert("Please choose a file");
 
-    const token = localStorage.getItem("token");
-    if (!token) return alert("You must be logged in.");
-    const decoded = jwtDecode(token);
-    console.log(decoded)
-    let userId = decoded.id;
-    console.log("Uploading for userId:", userId);
-    const formData = new FormData();
-    formData.append("profilePic", selectedFile);
-    formData.append("id", userId);
+  const token = localStorage.getItem("token");
+  if (!token) return alert("You must be logged in.");
 
-    try {
-      setUploading(true);
-      const res = await fetch(
-        `${API_BASE}/api/profile/upload-profile-pic`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      console.log("response received :" ,res);
-      if (res.data.success) {
-         const newImage = res.data.user.profileImage;
-        setUserData((prev) => ({ ...prev, profileImage: res.data.profileImage }));
+  const decoded = jwtDecode(token);
+  const userId = decoded.id;
 
-        // 🔹 persist to localStorage
-        const storedUser = JSON.parse(localStorage.getItem("user")) || {};
-        storedUser.profileImage = res.data.profileImage;
-        localStorage.setItem("user", JSON.stringify(storedUser));
+  const formData = new FormData();
+  formData.append("profilePic", selectedFile);
+  formData.append("id", userId);
 
-        setSelectedFile(null);
-        setCacheBust(Date.now());
-        alert("Profile picture updated!");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Error uploading profile picture");
-    } finally {
-      setUploading(false);
+  try {
+    setUploading(true);
+
+    const res = await fetch(`${API_BASE}/api/profile/upload-profile-pic`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`, 
+        // ❌ Do NOT set Content-Type manually here
+      },
+      body: formData,
+    });
+
+    const data = await res.json();
+    console.log("response received:", data);
+
+    if (data.success) {
+      
+
+      // persist to localStorage
+      localStorage.setItem("token",data.token)
+      const updateDecoded = jwtDecode(data.token);
+      console.log(updateDecoded)
+      setUserData((prev) => ({ ...prev, profileImage: updateDecoded.profileImage }));
+
+      setSelectedFile(null);
+      setCacheBust(Date.now());
+      alert("Profile picture updated!");
     }
-  };
+  } catch (err) {
+    console.error(err);
+    alert("Error uploading profile picture");
+  } finally {
+    setUploading(false);
+  }
+};
+
 
   // useEffect(() => {
   //   const fetchProfileData = async () => {

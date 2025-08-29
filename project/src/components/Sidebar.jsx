@@ -49,7 +49,7 @@ const Sidebar = ({ isDarkMode, toggleDarkMode }) => {
         try {
           const decoded = jwtDecode(token);
           userId = decoded.id;
-          // console.log(decoded)
+          console.log(decoded)
         } catch (err) {
           console.error('Invalid token', err);
           return;
@@ -72,7 +72,8 @@ const Sidebar = ({ isDarkMode, toggleDarkMode }) => {
             email: data.profile.email,
             // avatar: data.profile.profileImage || 'https://i.pravatar.cc/150?img=3',
             role: data.profile.role || 'Member',
-            isPro: data.profile.isPro || false
+            isPro: data.profile.isPro || false,
+            profileImage : data.profile.profileImage
           });
           
         }
@@ -93,7 +94,7 @@ const Sidebar = ({ isDarkMode, toggleDarkMode }) => {
   }, [user]);
 
   const currentUser = user || fetchedUser;
-  console.log(currentUser?.id)
+  // console.log(currentUser?.profileImage)
 if (isLoading) {
   return <div className="p-4">Loading user...</div>;
 }
@@ -192,7 +193,16 @@ if (!currentUser) {
       ]
     }
   ];
+  // console.log(currentUser.profileImage)
+   const getProfileImgSrc = () => {
+  if (!currentUser?.profileImage) return "/default-avatar.png";
 
+  const src = currentUser.profileImage.startsWith("http")
+    ? currentUser.profileImage
+    : `${API_BASE}${currentUser.profileImage}`;
+    console.log(src)
+  return `${src}?t=${Date.now()}`;
+};
   const handleNavigation = (path, isPro = false) => {
     if (isPro && !currentUser.isPro) {
       addNotification('This feature is only available for Pro users', 'error');
@@ -259,8 +269,8 @@ if (!currentUser) {
             >
               <div className="w-10 h-10 rounded-full overflow-hidden">
                 <img 
-                  src={currentUser.avatar} 
-                  alt={currentUser.name}
+                  src={getProfileImgSrc()} 
+                  alt={getProfileImgSrc()}
                   className="w-full h-full object-cover"
                 />
                 {currentUser.isPro && (
@@ -279,7 +289,7 @@ if (!currentUser) {
                 <div className="relative">
                   <div className="w-10 h-10 rounded-full overflow-hidden">
                     <img 
-                      src={currentUser.avatar} 
+                      src={getProfileImgSrc()} 
                       alt={currentUser.name}
                       className="w-full h-full object-cover"
                     />

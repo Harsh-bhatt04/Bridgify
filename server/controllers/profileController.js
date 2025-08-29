@@ -266,11 +266,29 @@ export const getUserAchievements = async (req, res) => {
         });
     }
 };
+// export const uploadprofileimage = async (req, res) => {
+//   try {
+//     const userId = req.body.id; 
+//     console.log("Received userId:", userId);
+//     const imageUrl = req.file.path; 
+
+//     const updatedUser = await User.findByIdAndUpdate(
+//       userId,
+//       { profileImage: imageUrl },
+//       { new: true }
+//     );
+
+//     res.json({ success: true, message: "Profile picture updated", user: updatedUser });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ success: false, message: "Server error" });
+//   }
+// };
+
 export const uploadprofileimage = async (req, res) => {
   try {
-    const userId = req.body.userId; 
-    console.log("Received userId:", userId);
-    const imageUrl = req.file.path; 
+    const userId = req.body.id; // frontend sends `id`
+    const imageUrl = req.file.path;
 
     const updatedUser = await User.findByIdAndUpdate(
       userId,
@@ -278,13 +296,32 @@ export const uploadprofileimage = async (req, res) => {
       { new: true }
     );
 
-    res.json({ success: true, message: "Profile picture updated", user: updatedUser });
+    if (!updatedUser) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    // issue a new token with updated profileImage
+    const newToken = jwt.sign(
+      {
+        id: updatedUser._id,
+        username: updatedUser.username,
+        name: updatedUser.name,
+        profileImage: updatedUser.profileImage,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    res.json({
+      success: true,
+      message: "Profile picture updated",
+      token: newToken, // send new token
+    });
   } catch (error) {
-    console.error(error);
+    console.error("Error in uploadprofileimage:", error);
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
-
 
 export default {
     getUserProfile,
