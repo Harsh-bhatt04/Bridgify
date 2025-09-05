@@ -9,6 +9,7 @@ import Notification from './components/Notification'
 // Layouts
 import MainLayout from './layouts/MainLayout'
 import AuthLayout from './layouts/AuthLayout'
+import ProtectedRoute from './layouts/ProtectedRoute';
 
 // Pages
 import Landing from './pages/Landing'
@@ -23,6 +24,7 @@ import Dashboard from './pages/Dashboard'
 import StartupCorner from './pages/StartupCorner'
 import CommunityPage from './pages/Community'
 import StartupIdeas from './pages/StartupIdeas'
+import VerifyOtp from './pages/auth/VerifyOtp'
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false)
@@ -113,10 +115,13 @@ function App() {
                 <Route element={<AuthLayout />}>
                   <Route path="/login" element={<Login />} />
                   <Route path="/signup" element={<Signup />} />
+                  <Route path="/verify-otp" element={<VerifyOtp />} />
                 </Route>
                 
                 {/* Main App Routes */}
+                
                 <Route element={<MainLayout isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />}>
+                <Route element={<ProtectedRoute />}>
                   <Route path="/feed" element={<Feed />} />
                   <Route path="/explore" element={<ExplorePage />} />
                   <Route path="/project/upload" element={<ProjectUpload />} />
@@ -125,6 +130,7 @@ function App() {
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/startup-ideas" element={<StartupIdeas />} />
                   <Route path="/community" element={<CommunityPage />} />
+                </Route>
                 </Route>
               </Routes>
             </AnimatePresence>

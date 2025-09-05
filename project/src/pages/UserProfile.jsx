@@ -63,53 +63,6 @@ const UserProfile = () => {
     setSelectedFile(e.target.files[0]);
   };
 
-  // const handleUpload = async () => {
-  //   if (!selectedFile) return alert("Please choose a file");
-
-  //   const token = localStorage.getItem("token");
-  //   if (!token) return alert("You must be logged in.");
-  //   const decoded = jwtDecode(token);
-  //   console.log(decoded)
-  //   let userId = decoded.id;
-  //   console.log("Uploading for userId:", userId);
-  //   const formData = new FormData();
-  //   formData.append("profilePic", selectedFile);
-  //   formData.append("id", userId);
-
-  //   try {
-  //     setUploading(true);
-  //     const res = await fetch(
-  //       `${API_BASE}/api/profile/upload-profile-pic`,
-  //       formData,
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //           "Content-Type": "multipart/form-data",
-  //         },
-  //       }
-  //     );
-  //     console.log("response received :" ,res);
-  //     if (res.data.success) {
-  //        const newImage = res.data.user.profileImage;
-  //       setUserData((prev) => ({ ...prev, profileImage: res.data.profileImage }));
-
-  //       // 🔹 persist to localStorage
-  //       const storedUser = JSON.parse(localStorage.getItem("user")) || {};
-  //       storedUser.profileImage = res.data.profileImage;
-  //       localStorage.setItem("user", JSON.stringify(storedUser));
-
-  //       setSelectedFile(null);
-  //       setCacheBust(Date.now());
-  //       alert("Profile picture updated!");
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //     alert("Error uploading profile picture");
-  //   } finally {
-  //     setUploading(false);
-  //   }
-  // };
-
   const handleUpload = async () => {
   if (!selectedFile) return alert("Please choose a file");
 
@@ -158,114 +111,6 @@ const UserProfile = () => {
     setUploading(false);
   }
 };
-
-
-  // useEffect(() => {
-  //   const fetchProfileData = async () => {
-  //     try {
-  //       setLoading(true);
-  //       setError(null);
-
-  //       const token = localStorage.getItem("token");
-  //       if (!token) {
-  //         navigate("/login");
-  //         return;
-  //       }
-
-  //       let userToFetch = routeUsername;
-  //       if (!userToFetch) {
-  //         try {
-  //           const decoded = jwtDecode(token);
-  //           userToFetch = decoded.username;
-  //           setUsername(decoded.username);
-  //         } catch (error) {
-  //           console.error("Error decoding token:", error);
-  //           localStorage.removeItem("token");
-  //           navigate("/login");
-  //           return;
-  //         }
-  //       }
-
-  //       const headers = {
-  //         Authorization: `Bearer ${token}`,
-  //         "Content-Type": "application/json",
-  //       };
-
-  //       // Fetch user profile
-  //       const userResponse = await fetch(`${API_BASE}/api/profile/${userToFetch}`, {
-  //         headers,
-  //       });
-
-  //       if (userResponse.status === 401) {
-  //         localStorage.removeItem("token");
-  //         navigate("/login");
-  //         return;
-  //       }
-
-  //       if (!userResponse.ok) {
-  //         throw new Error(`Failed to fetch user profile: ${userResponse.status}`);
-  //       }
-
-  //       const profileData = await userResponse.json();
-  //       if (!profileData) throw new Error("No profile data received from server");
-
-  //       setUserData(profileData);
-  //       setUsername(profileData.username);
-
-  //       // Fetch posts
-  //       const postsResponse = await fetch(`${API_BASE}/posts/user/${userToFetch}`, {
-  //         headers,
-  //       });
-  //       if (postsResponse.ok) {
-  //         const postsData = await postsResponse.json();
-  //         setPosts(postsData);
-  //       }
-
-  //       // Fetch GitHub activity
-  //       try {
-  //         const githubResponse = await fetch(
-  //           `${API_BASE}/api/profile/${userToFetch}/github`,
-  //           { headers }
-  //         );
-  //         if (githubResponse.ok) {
-  //           const githubActivity = await githubResponse.json();
-  //           setGithubData(githubActivity.activity || []);
-  //         }
-  //       } catch (e) {
-  //         console.error("Github fetch error", e);
-  //         setGithubData([]);
-  //       }
-
-  //       // Fetch achievements
-  //       try {
-  //         const achievementsResponse = await fetch(
-  //           `${API_BASE}/api/profile/${userToFetch}/achievements`,
-  //           { headers }
-  //         );
-  //         if (achievementsResponse.ok) {
-  //           const achievementsData = await achievementsResponse.json();
-  //           const mappedAchievements = (achievementsData.achievements || []).map(
-  //             (achievement) => ({
-  //               ...achievement,
-  //               Icon: iconMap[achievement.icon] || Star,
-  //             })
-  //           );
-  //           setAchievements(mappedAchievements);
-  //         }
-  //       } catch (e) {
-  //         console.error("Achievements fetch error", e);
-  //         setAchievements([]);
-  //       }
-  //     } catch (err) {
-  //       console.error("Error in fetchProfileData:", err);
-  //       setError(err.message || "Failed to fetch profile data");
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchProfileData();
-  // }, [routeUsername, navigate]);
 
   useEffect(() => {
   const fetchProfileData = async () => {
@@ -411,8 +256,11 @@ const UserProfile = () => {
         <p className="text-lg">Profile not found</p>
       </div>
     );
-  }
-
+  }//see here if the user found then only we are rendering the page 
+  // if not found then send a message
+  // so like vise do for the feed if there is no user in the token then alert them and redirect them to the login page 
+  // for checking the user exist or not simply check whether the token exist or not if exist means user is there else not 
+   
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Profile Header */}

@@ -64,7 +64,8 @@ const Feed = () => {
   const [activeTab, setActiveTab] = useState('trending')
   const [projects, setProjects] = useState(projectsData)
   const [showFilters, setShowFilters] = useState(false)
-
+  // const [user, setUser] = usestate({});
+  
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
