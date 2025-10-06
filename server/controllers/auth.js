@@ -77,13 +77,9 @@ export async function handleUserSignUp(req, res) {
 export async function verifyOTP(req, res) {
   try {
     const { email, otp } = req.body;
-
-    const user = await User.findOne({
-      email,
-      otp,
-      otpExpires: { $gt: Date.now() },
-    });
-
+    // console.log(req.body)
+    const user = await User.findOne({email,otp,otpExpires: { $gt: Date.now() }})
+    console.log(user)
     if (!user) {
       return res.status(400).json({ success: false, message: 'Invalid or expired OTP' });
     }

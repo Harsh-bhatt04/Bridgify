@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useEffect } from "react";
 
 const VerifyOtp = () => {
   const [otp, setOtp] = useState(["", "", "", ""]);
@@ -10,6 +11,11 @@ const VerifyOtp = () => {
 
   const email = localStorage.getItem("pendingEmail"); // email saved after signup
 
+  useEffect(()=>{
+     if (otp.every(d => d !== "")) { 
+    handleSubmit();
+  }
+  },[otp])
   // Handle OTP input
   const handleChange = (value, index) => {
     if (/^[0-9]?$/.test(value)) {
@@ -23,9 +29,9 @@ const VerifyOtp = () => {
       }
 
       // Auto submit when last digit entered
-      if (index === 3 && value && newOtp.join("").length === 4) {
-        handleSubmit();
-      }
+      // if (index === 3 && value && newOtp.join("").length === 4) {
+      //   handleSubmit();
+      // }
     }
   };
 
@@ -33,7 +39,9 @@ const VerifyOtp = () => {
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
     const otpCode = otp.join("");
-    if (otpCode.length < 4) {
+    console.log(otp)
+    console.log(otpCode)
+    if (otpCode.length !== 4) {
       setError("Please enter the full OTP.");
       return;
     }
