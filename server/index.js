@@ -9,6 +9,7 @@ import commentRoutes from './routes/commentRoutes.js'
 import followRoutes from './routes/followRoutes.js'
 import notificationRoutes from './routes/notificationRoutes.js'
 import profileRoutes from './routes/profileRoutes.js'
+import connectionRoutes from './routes/connectionRoutes.js';
 
 dotenv.config()
 
@@ -36,6 +37,8 @@ app.use('/comments', commentRoutes);
 app.use('/api/follow', followRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/connections', connectionRoutes);
+app.use("/api/profile", profileRoutes);
 //new git added now you check here
 // Error handling middleware
 app.use((err, req, res, next) => {

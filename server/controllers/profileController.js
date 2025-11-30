@@ -323,6 +323,31 @@ export const uploadprofileimage = async (req, res) => {
   }
 };
 
+export const searchUsers = async (req, res) => {
+  try {
+    const query = req.query.q?.trim();
+    if (!query) {
+      return res.status(400).json({ success: false, message: "Search query is required" });
+    }
+
+    // Find verified users whose username or name matches
+    const users = await User.find({
+      isVerified: true,
+      $or: [
+        { username: { $regex: query, $options: "i" } },
+        { name: { $regex: query, $options: "i" } }
+      ]
+    }).select("username profileImage _id");
+
+    res.json({ success: true, users });
+  } catch (err) {
+    console.error("Error in searchUsers:", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+
+
 export default {
     getUserProfile,
     updateUserProfile,

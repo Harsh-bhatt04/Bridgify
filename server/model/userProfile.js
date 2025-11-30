@@ -19,10 +19,14 @@ const userSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+    connections: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'UserProfile'
+    },
     profileImage: {
       type: String,
-      default: "",
-    }, 
+      default: "https://cdn-icons-png.flaticon.com/512/847/847969.png",
+    },
     otp: {
       type: String,
       default: null,

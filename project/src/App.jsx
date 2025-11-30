@@ -25,7 +25,7 @@ import StartupCorner from './pages/StartupCorner'
 import CommunityPage from './pages/Community'
 import StartupIdeas from './pages/StartupIdeas'
 import VerifyOtp from './pages/auth/VerifyOtp'
-
+import UpgradePlans from './pages/upgrade'
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false)
 
@@ -128,6 +128,7 @@ function App() {
                   <Route path="/project/:id" element={<ProjectView />} />
                   <Route path="/profile/:username" element={<UserProfile />} />
                   <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path='/upgrade' element={<UpgradePlans />} />
                   <Route path="/startup-ideas" element={<StartupIdeas />} />
                   <Route path="/community" element={<CommunityPage />} />
                 </Route>
