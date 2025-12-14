@@ -113,13 +113,13 @@ const VerifyOtp = () => {
 
           {error && <p className="text-red-500 text-center">{error}</p>}
 
-          <button
+          {/* <button
             type="submit"
             className="btn btn-primary w-full py-2.5"
             disabled={loading}
           >
             {loading ? "Verifying..." : "Verify"}
-          </button>
+          </button> */}
 
           <button
             type="button"
