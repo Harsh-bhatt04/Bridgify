@@ -26,6 +26,14 @@ import CommunityPage from './pages/Community'
 import StartupIdeas from './pages/StartupIdeas'
 import VerifyOtp from './pages/auth/VerifyOtp'
 import UpgradePlans from './pages/upgrade'
+import Messages from './pages/message'  
+import Notify from './pages/notify'
+import JobBoard from './pages/jobboard'
+import Support from './pages/support' 
+import Setting from './pages/setting'
+
+
+
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false)
 
@@ -131,6 +139,12 @@ function App() {
                   <Route path='/upgrade' element={<UpgradePlans />} />
                   <Route path="/startup-ideas" element={<StartupIdeas />} />
                   <Route path="/community" element={<CommunityPage />} />
+                  <Route path="/messages" element={<Messages />} />
+                  <Route path="/notifications" element={<Notify />} />
+                  <Route path="/jobs" element={<JobBoard />} />
+                  <Route path="/support" element={<Support />} /> 
+                  <Route path="/projects" element={<StartupIdeas />} />
+                  <Route path="/settings" element={<Setting />} />
                 </Route>
                 </Route>
               </Routes>
