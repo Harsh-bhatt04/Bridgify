@@ -11,6 +11,10 @@ const postSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        title:{
+            type: String,
+            required: true,
+        },
         media: {
             type: [String],
             default: [],
@@ -25,6 +29,10 @@ const postSchema = new mongoose.Schema(
             ref: 'Comment',
             default: [],
         }],
+        status:{
+            type:String,
+            required: true,
+        },
         tags: [{
             type: String,
             default: [],

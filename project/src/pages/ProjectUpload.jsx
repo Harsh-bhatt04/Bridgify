@@ -5,6 +5,7 @@ import { Upload, Link, Github, Image as ImageIcon, X, Plus, Loader2 } from 'luci
 import { useApp } from '../context/AppContext'
 import { useProjects } from '../context/ProjectContext'
 
+const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000";
 const techStackOptions = [
   "React", "Vue.js", "Angular", "Node.js", "Python", "Django",
   "Flask", "Express", "MongoDB", "PostgreSQL", "MySQL", "Firebase",
@@ -21,7 +22,7 @@ const categories = [
 const ProjectUpload = () => {
   const navigate = useNavigate()
   const { addNotification } = useApp()
-  const { addProject } = useProjects()
+  const { projects } = useProjects()
   const [isSubmitting, setIsSubmitting] = useState(false)
   
   const [formData, setFormData] = useState({
@@ -119,29 +120,79 @@ const ProjectUpload = () => {
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
-
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    
-    if (!validateForm()) {
-      addNotification('Please fill in all required fields', 'error')
-      return
-    }
+  e.preventDefault()
 
-    setIsSubmitting(true)
-
-    try {
-      // Add project to context
-      addProject(formData)
-      
-      addNotification('Project uploaded successfully!', 'success')
-      navigate('/dashboard')
-    } catch (error) {
-      addNotification('Failed to upload project. Please try again.', 'error')
-    } finally {
-      setIsSubmitting(false)
-    }
+  if (!validateForm()) {
+    addNotification('Please fill in all required fields', 'error')
+    return
   }
+
+  setIsSubmitting(true)
+
+  try {
+    // Build FormData to send image + fields
+    const data = new FormData()
+    data.append('content', formData.description)
+    data.append('tags', formData.techStack.join(','))
+    data.append('title', formData.title)
+    data.append('category', formData.category)
+    data.append('status', formData.status)
+    data.append('githubUrl', formData.githubUrl)
+    data.append('demoUrl', formData.demoUrl)
+    if (formData.image) data.append('media', formData.image)
+
+    const token = localStorage.getItem('token') // JWT token
+    console.log(token)
+    const response = await fetch(`${API_BASE}/api/posts`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`
+        // NOTE: Don't set Content-Type for FormData; browser sets it automatically
+      },
+      body: data
+    })
+
+    if (response.status === 500) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || 'Failed to upload project')
+    }
+
+    const result = await response.json()
+    console.log(result)
+    addNotification('Project uploaded successfully!', 'success')
+    navigate('/dashboard')
+  } catch (error) {
+    console.error('Upload error:', error)
+    addNotification(error.message || 'Failed to upload project. Please try again.', 'error')
+  } finally {
+    setIsSubmitting(false)
+  }
+}
+
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault()
+    
+  //   if (!validateForm()) {
+  //     addNotification('Please fill in all required fields', 'error')
+  //     return
+  //   }
+
+  //   setIsSubmitting(true)
+
+  //   try {
+  //     // Add project to context
+  //     addProject(formData)
+      
+  //     addNotification('Project uploaded successfully!', 'success')
+  //     navigate('/dashboard')
+  //   } catch (error) {
+  //     addNotification('Failed to upload project. Please try again.', 'error')
+  //   } finally {
+  //     setIsSubmitting(false)
+  //   }
+  // }
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">

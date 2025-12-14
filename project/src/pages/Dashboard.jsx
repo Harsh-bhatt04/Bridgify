@@ -4,10 +4,19 @@ import { useProjects } from '../context/ProjectContext';
 import { useNavigate } from 'react-router-dom';
 import ProjectNotFound from '../components/ProjectNotFound';
 import ComingSoon from '../components/ComingSoon';
+import { timeAgo } from '../utils/TimeAgo';
 
 const Dashboard = () => {
-  const { projects } = useProjects();
+  const { projects,loading,error } = useProjects();
   const navigate = useNavigate();
+
+  const totalProjects = projects.length;
+  const completedProjects = projects.filter(p=>p.status === 'Completed').length
+  const activeProjects = totalProjects - completedProjects
+  console.log(totalProjects)
+  console.log(completedProjects)
+  if(loading) return <p>Loading the projects</p>
+  if(error) return <p className='text-red-500'>{error}</p>
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -42,19 +51,19 @@ const Dashboard = () => {
         <div className="card p-6 bg-gradient-to-br from-primary-500/10 to-primary-500/5">
           <h3 className="text-lg font-semibold mb-2">Total Projects</h3>
           <p className="text-3xl font-bold text-primary-600 dark:text-primary-400">
-            {projects.length}
+            {totalProjects}
           </p>
         </div>
         <div className="card p-6 bg-gradient-to-br from-blue-500/10 to-blue-500/5">
           <h3 className="text-lg font-semibold mb-2">Active Projects</h3>
           <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-            {projects.filter(p => p.status === 'In Progress').length}
+            {activeProjects}
           </p>
         </div>
         <div className="card p-6 bg-gradient-to-br from-green-500/10 to-green-500/5">
           <h3 className="text-lg font-semibold mb-2">Completed</h3>
           <p className="text-3xl font-bold text-green-600 dark:text-green-400">
-            {projects.filter(p => p.status === 'Completed').length}
+            {completedProjects}
           </p>
         </div>
       </motion.div>
@@ -62,20 +71,20 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         <div className="lg:col-span-2">
           <h2 className="text-2xl font-semibold mb-4">Your Projects</h2>
-          {projects.length === 0 ? (
+          {projects?.length === 0 ? (
             <ProjectNotFound />
           ) : (
             <div className="grid grid-cols-1 gap-6">
-              {projects.map((project) => (
+              {projects?.map((project) => (
                 <motion.div
-                  key={project.id}
+                  key={project._id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="card overflow-hidden cursor-pointer"
-                  onClick={() => navigate(`/project/${project.id}`)}
+                  onClick={() => navigate(`/project/${project._id}`)}
                 >
                   <div className="flex flex-col md:flex-row">
-                    {project.imagePreview && (
+                    {project?.imagePreview && (
                       <div className="md:w-64 h-48 md:h-auto">
                         <img
                           src={project.imagePreview}
@@ -103,7 +112,7 @@ const Dashboard = () => {
                       </div>
 
                       <div className="flex flex-wrap gap-2 mb-4">
-                        {project.techStack.map((tech) => (
+                        {project?.tags.map((tech) => (
                           <span
                             key={tech}
                             className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200"
@@ -118,7 +127,7 @@ const Dashboard = () => {
                         <div className="flex items-center gap-4 text-sm text-gray-500">
                           <div className="flex items-center gap-1">
                             <Calendar size={16} />
-                            {new Date(project.createdAt).toLocaleDateString()}
+                            {timeAgo(project.createdAt)}
                           </div>
                         </div>
 

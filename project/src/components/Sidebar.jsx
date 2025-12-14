@@ -49,7 +49,7 @@ const Sidebar = ({ isDarkMode, toggleDarkMode }) => {
         try {
           const decoded = jwtDecode(token);
           userId = decoded.id;
-          console.log(decoded)
+
         } catch (err) {
           console.error('Invalid token', err);
           return;
@@ -200,7 +200,6 @@ if (!currentUser) {
   const src = currentUser.profileImage.startsWith("http")
     ? currentUser.profileImage
     : `${API_BASE}${currentUser.profileImage}`;
-    console.log(src)
   return `${src}?t=${Date.now()}`;
 };
   const handleNavigation = (path, isPro = false) => {
@@ -244,7 +243,7 @@ if (!currentUser) {
           {!isCollapsed && (
             <div 
               className="flex items-center gap-2 cursor-pointer"
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate('/feed')}
             >
               <div className="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold">S</span>
