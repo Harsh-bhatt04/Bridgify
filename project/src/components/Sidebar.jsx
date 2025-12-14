@@ -246,7 +246,7 @@ if (!currentUser) {
               onClick={() => navigate('/feed')}
             >
               <div className="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold">S</span>
+                <span className="text-white font-bold">B</span>
               </div>
               <span className="font-semibold text-gray-900 dark:text-white">Bridgify</span>
             </div>
@@ -331,7 +331,7 @@ if (!currentUser) {
                   {!currentUser.isPro && (
                     <button
                       onClick={handleUpgradeClick}
-                      className="w-full px-4 py-2 text-sm text-left text-primary-600 dark:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 font-medium"
+                      className="w-full px-4 py-2 text-sm text-left tex t-primary-600 dark:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 font-medium"
                     >
                       Upgrade to Pro
                     </button>
