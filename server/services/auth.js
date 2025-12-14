@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-const secret = "harsh@1#2$3"
+const secret = "supersecretjwt"
 
 export function setUser(user){
     return jwt.sign({

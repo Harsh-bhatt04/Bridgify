@@ -32,7 +32,7 @@ mongoose.connect(process.env.DB_PATH)
 
 // Routes
 app.use('/api', authRoutes);
-app.use('/posts', userPostRoutes);
+app.use('/api/posts', userPostRoutes);
 app.use('/comments', commentRoutes);
 app.use('/api/follow', followRoutes);
 app.use('/api/notifications', notificationRoutes);

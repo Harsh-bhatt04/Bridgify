@@ -1,40 +1,101 @@
 import Post from '../model/post.js';
 import User from '../model/userProfile.js'; 
-// import Comment from '../model/comments.js'
 import mongoose from 'mongoose';
+import cloudinary from '../config/cloudinary.js';
 import { createNotification } from './notificationController.js';
 
-export const createPost = async (req, res) => {
-    try {
-        const { content, media, tags, userId } = req.body; 
-        if (!content) {
-            return res.status(400).json({ error: "Content is required" });
-        }
-        const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).json({ error: "User not found" });
-        }
-        // Create new post
-        const newPost = new Post({
-            userId: userId, 
-            content,
-            media: media || [],
-            tags: tags || [],
-        });
-        console.log(newPost);
-        const savedPost = await newPost.save();
-        if (!user.posts) {
-            user.posts = []; // Initialize user.posts if it's undefined
-          }
-        user.posts.push(savedPost._id);
-        await user.save();
+// export const createPost = async (req, res) => {
+//     try {
+//         const { content, media, tags, userId } = req.body; 
+//         if (!content) {
+//             return res.status(400).json({ error: "Content is required" });
+//         }
+//         const user = await User.findById(userId);
+//         if (!user) {
+//             return res.status(404).json({ error: "User not found" });
+//         }
+//         // Create new post
+//         const newPost = new Post({
+//             userId: userId, 
+//             content,
+//             media: media || [],
+//             tags: tags || [],
+//         });
+//         console.log(newPost);
+//         const savedPost = await newPost.save();
+//         if (!user.posts) {
+//             user.posts = []; // Initialize user.posts if it's undefined
+//           }
+//         user.posts.push(savedPost._id);
+//         await user.save();
 
-        res.status(201).json(savedPost);
-    } catch (error) {
-        console.error("Error creating post:", error);
-        res.status(500).json({ error: "Failed to create post" });
+//         res.status(201).json(savedPost);
+//     } catch (error) {
+//         console.error("Error creating post:", error);
+//         res.status(500).json({ error: "Failed to create post" });
+//     }
+// };
+export const createPost = async (req, res) => {
+  try {
+    console.log(req.body)
+    const { content, tags, title,status} = req.body;
+    const userId = req.user?.id || req.body.userId;
+    
+    
+    if (!userId) {
+      return res.status(401).json({ error: "User not authenticated" });
     }
+
+      if (!content && !req.file) {
+  return res.status(400).json({ error: "Post must have content or media" });
+}
+
+// --- Log the uploaded file for debugging ---
+console.log(req.file);
+
+// --- Find the user ---
+const user = await User.findById(userId);
+if (!user) return res.status(404).json({ error: "User not found" });
+
+// --- Upload media to Cloudinary ---
+const uploadedMedia = [];
+if (req.file) {
+  const result = await new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: `users/${userId}/posts` },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+      }
+    );
+    stream.end(req.file.buffer);
+  });
+  console.log(result.secure_url)
+  uploadedMedia.push(result.secure_url);
+}
+
+    // --- Create and save post ---
+    const newPost = new Post({
+      userId,
+      content,
+      title,
+      status,
+      media: uploadedMedia, // array of Cloudinary URLs
+      tags: tags ? tags.split(",") : [],
+    });
+
+    const savedPost = await newPost.save();
+
+    // user.posts.push(savedPost._id);
+    // await user.save();
+
+    res.status(201).json(savedPost);
+  } catch (error) {
+    console.error("Error creating post:", error);
+    res.status(500).json({ error: "Failed to create post" });
+  }
 };
+
 
 export const getPosts = async (req, res) => {
   try {

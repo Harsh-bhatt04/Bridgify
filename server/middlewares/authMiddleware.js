@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import User from "../model/userProfile.js";
 dotenv.config();
-
+const secret = "supersecretjwt"
 export const verifyToken = (req, res, next) => {
   let token = req.headers.authorization?.split(" ")[1];
   if (!token) {
@@ -15,7 +15,9 @@ export const verifyToken = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, secret);
+    console.log(decoded)
+    console.log(secret)
     req.user = decoded; // attach decoded payload (id, username, etc.)
     next();
   } catch (err) {

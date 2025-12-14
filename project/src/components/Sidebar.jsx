@@ -49,7 +49,7 @@ const Sidebar = ({ isDarkMode, toggleDarkMode }) => {
         try {
           const decoded = jwtDecode(token);
           userId = decoded.id;
-          console.log(decoded)
+
         } catch (err) {
           console.error('Invalid token', err);
           return;
@@ -200,7 +200,6 @@ if (!currentUser) {
   const src = currentUser.profileImage.startsWith("http")
     ? currentUser.profileImage
     : `${API_BASE}${currentUser.profileImage}`;
-    console.log(src)
   return `${src}?t=${Date.now()}`;
 };
   const handleNavigation = (path, isPro = false) => {
