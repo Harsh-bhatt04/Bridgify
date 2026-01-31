@@ -13,6 +13,6 @@ router.get('/', getPosts);
 router.get('/:id', getPostById);
 router.put('/:id', verifyToken, updatePost); // Protect this route
 //router.delete('/:id', checkAuth, deletePost); // Protect this route
-router.post('/:postId/like', checkAuth, likePost);
+router.post('/like/:postId', checkAuth, likePost);
 export default router;
 //update

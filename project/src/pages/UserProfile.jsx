@@ -43,7 +43,7 @@ const iconMap = {
 };
 
 const UserProfile = () => {
-  const { username: routeUsername } = useParams();
+  // const { username: routeUsername } = useParams();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("overview");
   const [userData, setUserData] = useState(null);
@@ -52,8 +52,8 @@ const UserProfile = () => {
   const [githubData, setGithubData] = useState(null);
   const [achievements, setAchievements] = useState([]);
   const [posts, setPosts] = useState([]);
-  const [username, setUsername] = useState(routeUsername);
-
+  const [username, setUsername] = useState("");
+  // console.log("From router",routeUsername)
   // // For file upload
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -115,21 +115,24 @@ const UserProfile = () => {
   useEffect(() => {
   const fetchProfileData = async () => {
     try {
+      
       setLoading(true);
       setError(null);
-
+      console.log("From outer ")
       const token = localStorage.getItem("token");
+      
       if (!token) {
         navigate("/login");
         return;
       }
-
-      let userId = routeUsername; // ⚡ route now contains userId, not username
+      
+      // let userId = routeUsername; // ⚡ route now contains userId, not username
+      let userId;
       if (!userId) {
         try {
           const decoded = jwtDecode(token);
           console.log(decoded)
-          userId = decoded.userId;   // ⚡ decode id from token
+          userId = decoded.id;   // ⚡ decode id from token
           setUsername(decoded.username);
         } catch (error) {
           console.error("Error decoding token:", error);
@@ -212,7 +215,7 @@ const UserProfile = () => {
   };
 
   fetchProfileData();
-}, [routeUsername, navigate]);
+}, [ navigate]);
 
 
   // Helper: build absolute URL for stored relative paths like "/uploads/xxxx.jpg"

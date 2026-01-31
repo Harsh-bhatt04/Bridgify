@@ -62,55 +62,10 @@ function App() {
     }
   }
 
-  // Mock data
-  const projects = {
-    overview: [
-      {
-        id: 1,
-        title: "SmartHub",
-        description: "A social platform for developers to showcase their projects",
-        techStack: ["React", "Node.js", "MongoDB"],
-        status: "Open to Collaborate",
-        upvotes: 42,
-        views: 1200,
-        comments: 15
-      },
-      {
-        id: 2,
-        title: "AI Assistant",
-        description: "An AI-powered personal assistant",
-        techStack: ["Python", "TensorFlow", "React"],
-        status: "Showcase Only",
-        upvotes: 28,
-        views: 850,
-        comments: 8
-      },
-      {
-        id: 3,
-        title: "DevConnect",
-        description: "Developer networking platform",
-        techStack: ["Vue.js", "Firebase"],
-        status: "In Progress",
-        upvotes: 12,
-        views: 320,
-        comments: 5
-      },
-      {
-        id: 4,
-        title: "CodeCollab",
-        description: "Real-time collaborative code editor",
-        techStack: ["React", "Socket.io"],
-        status: "Open Source",
-        upvotes: 156,
-        views: 2400,
-        comments: 32
-      }
-    ]
-  }
-
   return (
+    <ProjectProvider>
     <AppProvider>
-      <ProjectProvider>
+      
         <Router>
           <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
             <Notification />
@@ -151,8 +106,8 @@ function App() {
             </AnimatePresence>
           </div>
         </Router>
+        </AppProvider>
       </ProjectProvider>
-    </AppProvider>
   )
 }
 

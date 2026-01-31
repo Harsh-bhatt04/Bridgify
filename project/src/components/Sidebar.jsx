@@ -64,7 +64,7 @@ const Sidebar = ({ isDarkMode, toggleDarkMode }) => {
 
         if (res.ok) {
           const data = await res.json();
-          console.log(data);
+          console.log("DATA",data);
           
           setFetchedUser({
             id : data.profile._id,
@@ -93,8 +93,8 @@ const Sidebar = ({ isDarkMode, toggleDarkMode }) => {
     }
   }, [user]);
 
-  const currentUser = user || fetchedUser;
-  // console.log(currentUser?.profileImage)
+  const currentUser = fetchedUser || user;
+  console.log("USER",currentUser)
 if (isLoading) {
   return <div className="p-4">Loading user...</div>;
 }
@@ -227,6 +227,7 @@ if (!currentUser) {
   };
     // console.log(currentUser.username)
   const handleProfileClick = () => {
+    console.log("When profile cliecked",currentUser)
     navigate(`/profile/${currentUser?.id}`);
     setIsProfileMenuOpen(false);
   };

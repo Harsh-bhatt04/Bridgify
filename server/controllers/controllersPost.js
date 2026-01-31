@@ -177,46 +177,112 @@ export const updatePost = async (req, res) => {
     }
   };
   
-  export const likePost = async (req, res) => {
-    try {
-      const { postId } = req.params;
-      const  userId  = req.user?.id || req.body?.userId; // Get userId from req.user if available, else from req.body
+//   export const likePost = async (req, res) => {
+//     try {
+//       const { postId } = req.params;
+//       const  userId  = req.user?.id || req.body?.userId; // Get userId from req.user if available, else from req.body
   
-      console.log("postId:", postId);  // Debug: Check the value of postId
+//       console.log("postId:", postId);  // Debug: Check the value of postId
+//       console.log(userId)
+//       // Check if the post exists
+//       const post = await Post.findById(postId);
+//       if (!post) {
+//         return res.status(404).json({ error: 'Post not found' });
+//       }
   
-      // Check if the post exists
-      const post = await Post.findById(postId);
-      if (!post) {
-        return res.status(404).json({ error: 'Post not found' });
-      }
-  
-      // Convert userId to Mongoose ObjectId
-      const userIdObj =  userId instanceof mongoose.Types.ObjectId ? userId : new mongoose.Types.ObjectId(userId);
+//       // Convert userId to Mongoose ObjectId
+//       const userIdObj =  userId instanceof mongoose.Types.ObjectId ? userId : new mongoose.Types.ObjectId(userId);
   
   
-      // Check if the user has already liked the post
-      const hasLiked = post.likes.some(likeId => likeId.toString() === userIdObj.toString());
+//       // Check if the user has already liked the post
+//       const hasLiked = post.likes.some(likeId => likeId.toString() === userIdObj.toString());
   
-      if (hasLiked) {
-        // Unlike the post: Remove the user's ID from the likes array
-        post.likes = post.likes.filter(likeId => likeId.toString() !== userIdObj.toString());
-        await post.save();
-        return res.status(200).json({ message: 'Post unliked', likes: post.likes.length });
-      } else {
-        // Like the post: Add the user's ID to the likes array
-        post.likes.push(userIdObj);
-        await post.save();
+//       if (hasLiked) {
+//         // Unlike the post: Remove the user's ID from the likes array
+//         post.likes = post.likes.filter(likeId => likeId.toString() !== userIdObj.toString());
+//         await post.save();
+//         return res.status(200).json({ message: 'Post unliked', likes: post.likes.length });
+//       } else {
+//         // Like the post: Add the user's ID to the likes array
+//         post.likes.push(userIdObj);
+//         await post.save();
         
-        // Create notification for the post owner
-        if (post.userId.toString() !== userIdObj.toString()) {
-          await createNotification(post.userId, userIdObj, 'like', postId);
-        }
+//         // Create notification for the post owner
+//         if (post.userId.toString() !== userIdObj.toString()) {
+//           await createNotification(post.userId, userIdObj, 'like', postId);
+//         }
         
-        return res.status(200).json({ message: 'Post liked', likes: post.likes.length });
-      }
-    } catch (error) {
-      console.error('Error liking/unliking post:', error);
-      return res.status(500).json({ error: 'Internal server error' });
+//         return res.status(200).json({
+//   message: hasLiked ? "Post unliked" : "Post liked",
+//   likes: post.likes
+// });
+
+//       }
+//     } catch (error) {
+//       console.error('Error liking/unliking post:', error);
+//       return res.status(500).json({ error: 'Internal server error' });
+//     }
+//   };
+export const likePost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+
+    // ✅ user MUST come from auth middleware
+    const userId  = req.user?.id
+
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+      return res.status(400).json({ error: "Invalid post ID" });
     }
-  };
+
+    const userIdObj = new mongoose.Types.ObjectId(userId);
+
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    // ✅ Check if user already liked
+    const hasLiked = post.likes.some(
+      (id) => id.toString() === userIdObj.toString()
+    );
+
+    if (hasLiked) {
+      // 🔽 UNLIKE (remove userId safely)
+      await Post.findByIdAndUpdate(postId, {
+        $pull: { likes: userIdObj },
+      });
+    } else {
+      // 🔼 LIKE (no duplicates guaranteed)
+      await Post.findByIdAndUpdate(postId, {
+        $addToSet: { likes: userIdObj },
+      });
+
+      // 🔔 Notification (only if liking someone else's post)
+      if (post.userId.toString() !== userIdObj.toString()) {
+        await createNotification(
+          post._id,
+          userIdObj,
+          "like",
+          postId
+        );
+      }
+    }
+    console.log("USER ID FROM TOKEN:", userId);
+    // 🔁 Fetch updated post
+    const updatedPost = await Post.findById(postId);
+
+    return res.status(200).json({
+      message: hasLiked ? "Post unliked" : "Post liked",
+      likes: updatedPost.likes,              // array of userIds
+      likesCount: updatedPost.likes.length,  // number
+      isLiked: !hasLiked                     // frontend helper
+    });
+
+  } catch (error) {
+    console.error("Like/Unlike error:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
   //update

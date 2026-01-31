@@ -1,0 +1,45 @@
+5. Auto Post / Idea Generator
+
+📌 Use case:
+
+Users create posts (questions, ideas, discussions).
+
+GenAI helps rephrase, improve clarity, or generate ideas.
+
+🧠 Example:
+
+“Improve this question for better responses”
+
+💡 Benefit: Better engagement on the platform.
+
+
+4. Content Summarization & Notes Generator
+
+📌 Use case:
+
+Long articles, PDFs, or posts uploaded on Bridgify.
+
+GenAI generates short notes or summaries.
+
+🧠 Example:
+Upload a blog → Get 5 key points.
+
+💡 Benefit: Student-friendly learning.
+
+
+4. AI Project Idea Generator
+
+📌 What it does:
+User selects tech stack → AI suggests ideas.
+
+🛠 How to build:
+
+Dropdown (React, MERN, Blockchain)9 oct
+
+Button → “Generate Ideas”
+
+Show list
+
+🧠 Example:
+
+MERN → “Student Collaboration Platform”, “AI Resume Analyzer”
