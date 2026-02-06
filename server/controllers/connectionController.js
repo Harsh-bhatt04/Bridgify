@@ -2,26 +2,6 @@ import ConnectionRequest from '../model/connectionRequest.js';
 import User from '../model/userProfile.js';
 
 // Send connection request
-// export const sendConnectionRequest = async (req, res) => {
-//   try {
-//     const { receiverId } = req.params;
-//     const senderId = req.user.id;
-
-//     if (senderId === receiverId)
-//       return res.status(400).json({ error: "You can't connect with yourself" });
-
-//     // Check if already exists
-//     const existing = await ConnectionRequest.findOne({ senderId, receiverId });
-//     if (existing) return res.status(400).json({ error: "Request already sent" });
-
-//     await ConnectionRequest.create({ senderId, receiverId });
-//     res.json({ message: "Connection request sent!" });
-
-//   } catch (error) {
-//     console.error("Send Request Error:", error);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// };
 export const sendConnectionRequest = async (req, res) => {
   try {
     const { receiverId } = req.params;
@@ -52,30 +32,6 @@ export const sendConnectionRequest = async (req, res) => {
   }
 };
 
-// Accept connection request
-// export const acceptConnectionRequest = async (req, res) => {
-//   try {
-//     const { requestId } = req.params;
-//     const request = await ConnectionRequest.findById(requestId);
-
-//     if (!request) return res.status(404).json({ error: "Request not found" });
-
-//     if (request.receiverId.toString() !== req.user.id)
-//       return res.status(403).json({ error: "Not authorized" });
-
-//     request.status = 'accepted';
-//     await request.save();
-
-//     // Update both users' connections
-//     await User.findByIdAndUpdate(request.senderId, { $push: { connections: request.receiverId } });
-//     await User.findByIdAndUpdate(request.receiverId, { $push: { connections: request.senderId } });
-
-//     res.json({ message: "Connection accepted successfully!" });
-//   } catch (error) {
-//     console.error("Accept Request Error:", error);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// };
 export const acceptConnectionRequest = async (req, res) => {
   try {
     const { requestId } = req.params;
@@ -100,26 +56,6 @@ export const acceptConnectionRequest = async (req, res) => {
   }
 };
 
-// Reject connection request
-// export const rejectConnectionRequest = async (req, res) => {
-//   try {
-//     const { requestId } = req.params;
-//     const request = await ConnectionRequest.findById(requestId);
-
-//     if (!request) return res.status(404).json({ error: "Request not found" });
-
-//     if (request.receiverId.toString() !== req.user.id)
-//       return res.status(403).json({ error: "Not authorized" });
-
-//     request.status = 'rejected';
-//     await request.save();
-
-//     res.json({ message: "Connection request rejected" });
-//   } catch (error) {
-//     console.error("Reject Request Error:", error);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// };
 export const rejectConnectionRequest = async (req, res) => {
   try {
     const { requestId } = req.params;
@@ -143,25 +79,6 @@ export const rejectConnectionRequest = async (req, res) => {
   }
 };
 
-
-// export const getPendingRequests = async (req, res) => {
-//   try {
-//     console.log("Decoded user from token:", req.user);
-
-//     const userId = req.user?.id;
-//     if (!userId) {
-//       return res.status(400).json({ error: "Invalid token or user ID missing" });
-//     }
-
-//     const requests = await ConnectionRequest.find({ receiver: userId, status: 'pending' })
-//       .populate('sender', 'username profileImage');
-
-//     res.status(200).json({ success: true, requests });
-//   } catch (error) {
-//     console.error("Get Pending Requests Error:", error);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// };
 export const getPendingRequests = async (req, res) => {
   try {
     const userId = req.user.id;

@@ -6,8 +6,6 @@ import { uploadPost } from '../middlewares/uploadPost.js';
 
 const router = express.Router();
 
-// router.post('/', checkAuth, createPost); // Protect this route
-
 router.post("/", verifyToken, uploadPost.single("media"), createPost);
 router.get('/', getPosts);
 router.get('/:id', getPostById);

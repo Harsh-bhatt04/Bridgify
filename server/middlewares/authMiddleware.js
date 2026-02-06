@@ -26,30 +26,6 @@ export const verifyToken = (req, res, next) => {
   }
 };
 
-
-// export const authMiddleware = (req, res, next) => {
-//   try {
-//     // Get token from header or cookie
-//     let token = req.headers.authorization?.split(" ")[1] || req.cookies?.token;
-
-//     if (!token) {
-//       console.log("No token provided");
-//       return res.status(401).json({ error: "Unauthorized: No token provided" });
-//     }
-
-//     // Verify token
-//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-//     // Attach decoded payload to req.user
-//     req.user = decoded;
-
-//     // Pass control to next middleware/route handler
-//     next();
-//   } catch (err) {
-//     console.error("JWT verification failed:", err.message);
-//     return res.status(401).json({ error: "Unauthorized: Invalid token" });
-//   }
-// };
 export const authMiddleware = async (req, res, next) => {
   try {
     const token = req.header("Authorization")?.replace("Bearer ", "");

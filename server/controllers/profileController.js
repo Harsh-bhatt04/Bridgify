@@ -266,24 +266,6 @@ export const getUserAchievements = async (req, res) => {
         });
     }
 };
-// export const uploadprofileimage = async (req, res) => {
-//   try {
-//     const userId = req.body.id; 
-//     console.log("Received userId:", userId);
-//     const imageUrl = req.file.path; 
-
-//     const updatedUser = await User.findByIdAndUpdate(
-//       userId,
-//       { profileImage: imageUrl },
-//       { new: true }
-//     );
-
-//     res.json({ success: true, message: "Profile picture updated", user: updatedUser });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ success: false, message: "Server error" });
-//   }
-// };
 
 export const uploadprofileimage = async (req, res) => {
   try {

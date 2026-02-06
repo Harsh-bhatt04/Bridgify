@@ -4,37 +4,6 @@ import mongoose from 'mongoose';
 import cloudinary from '../config/cloudinary.js';
 import { createNotification } from './notificationController.js';
 
-// export const createPost = async (req, res) => {
-//     try {
-//         const { content, media, tags, userId } = req.body; 
-//         if (!content) {
-//             return res.status(400).json({ error: "Content is required" });
-//         }
-//         const user = await User.findById(userId);
-//         if (!user) {
-//             return res.status(404).json({ error: "User not found" });
-//         }
-//         // Create new post
-//         const newPost = new Post({
-//             userId: userId, 
-//             content,
-//             media: media || [],
-//             tags: tags || [],
-//         });
-//         console.log(newPost);
-//         const savedPost = await newPost.save();
-//         if (!user.posts) {
-//             user.posts = []; // Initialize user.posts if it's undefined
-//           }
-//         user.posts.push(savedPost._id);
-//         await user.save();
-
-//         res.status(201).json(savedPost);
-//     } catch (error) {
-//         console.error("Error creating post:", error);
-//         res.status(500).json({ error: "Failed to create post" });
-//     }
-// };
 export const createPost = async (req, res) => {
   try {
     console.log(req.body)
@@ -177,52 +146,6 @@ export const updatePost = async (req, res) => {
     }
   };
   
-//   export const likePost = async (req, res) => {
-//     try {
-//       const { postId } = req.params;
-//       const  userId  = req.user?.id || req.body?.userId; // Get userId from req.user if available, else from req.body
-  
-//       console.log("postId:", postId);  // Debug: Check the value of postId
-//       console.log(userId)
-//       // Check if the post exists
-//       const post = await Post.findById(postId);
-//       if (!post) {
-//         return res.status(404).json({ error: 'Post not found' });
-//       }
-  
-//       // Convert userId to Mongoose ObjectId
-//       const userIdObj =  userId instanceof mongoose.Types.ObjectId ? userId : new mongoose.Types.ObjectId(userId);
-  
-  
-//       // Check if the user has already liked the post
-//       const hasLiked = post.likes.some(likeId => likeId.toString() === userIdObj.toString());
-  
-//       if (hasLiked) {
-//         // Unlike the post: Remove the user's ID from the likes array
-//         post.likes = post.likes.filter(likeId => likeId.toString() !== userIdObj.toString());
-//         await post.save();
-//         return res.status(200).json({ message: 'Post unliked', likes: post.likes.length });
-//       } else {
-//         // Like the post: Add the user's ID to the likes array
-//         post.likes.push(userIdObj);
-//         await post.save();
-        
-//         // Create notification for the post owner
-//         if (post.userId.toString() !== userIdObj.toString()) {
-//           await createNotification(post.userId, userIdObj, 'like', postId);
-//         }
-        
-//         return res.status(200).json({
-//   message: hasLiked ? "Post unliked" : "Post liked",
-//   likes: post.likes
-// });
-
-//       }
-//     } catch (error) {
-//       console.error('Error liking/unliking post:', error);
-//       return res.status(500).json({ error: 'Internal server error' });
-//     }
-//   };
 export const likePost = async (req, res) => {
   try {
     const { postId } = req.params;

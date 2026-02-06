@@ -10,7 +10,7 @@ export const ProjectProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const token = localStorage.getItem('token');
 
-  // ✅ Fetch projects from backend
+  // Fetch projects from backend
   const fetchProjects = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -47,8 +47,8 @@ export const ProjectProvider = ({ children }) => {
     }
   };
 
-  // ✅ Add project (after upload)
-  const addProject = (project) => {                                     // ✅ updated
+  // Add project (after upload)
+  const addProject = (project) => {                                     
     setProjects((prevProjects) => [
       ...prevProjects,
       {
@@ -59,7 +59,7 @@ export const ProjectProvider = ({ children }) => {
     ]);
   };
 
-  // ✅ Delete project (optional for dashboard buttons)
+  // Delete project (optional for dashboard buttons)
   const deleteProject = async (id) => {
     try {
       await axios.delete(`http://localhost:8000/api/posts/${id}`, {

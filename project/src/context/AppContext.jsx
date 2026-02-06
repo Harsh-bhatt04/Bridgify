@@ -12,30 +12,6 @@ export const AppProvider = ({ children }) => {
 
   // Check for existing session on mount
   useEffect(() => {
-    // const checkAuth = async () => {
-    //   const token = localStorage.getItem('token');
-    //   if (token) {
-    //     try {
-    //       // Here you would typically validate the token with your backend
-    //       // For now, we'll just check if it exists
-
-    //       setIsAuthenticated(true);
-          
-    //       // If you have user data in localStorage, use it
-    //       const storedUser = localStorage.getItem('user');
-    //       if (storedUser) {
-    //         setUser(JSON.parse(storedUser));
-    //       }
-    //     } catch (error) {
-    //       console.error('Auth check failed:', error);
-    //       localStorage.removeItem('token');
-    //       localStorage.removeItem('user');
-    //       setIsAuthenticated(false);
-    //       setUser(null);
-    //     }
-    //   }
-    // };
-
     // checkAuth();
      const checkAuth = () => {
     const token = localStorage.getItem('token');
@@ -75,19 +51,6 @@ export const AppProvider = ({ children }) => {
     });
   };
 
-  // const toggleLikeProject = (projectId) => {
-  //   setProjects(prev => {
-  //     const updatedOverview = prev.overview.map(p => 
-  //       p._id === projectId ? { ...p, isLiked: !p.isLiked } : p
-  //     );
-  //     return {
-  //       ...prev,
-  //       overview: updatedOverview,
-  //       liked: updatedOverview.filter(p => p.isLiked)
-  //     };
-  //   });
-
-  // };
   const toggleLikeProject = async (projectId) => {
   try {
     const token = localStorage.getItem("token")
@@ -106,15 +69,6 @@ export const AppProvider = ({ children }) => {
     
     const data = await res.json();
     console.log("res", data)
-    // ✅ Update state using likes array from backend
-    // setProjects(prev => ({
-    //   ...prev,
-    //   overview: prev.overview?.map(project =>
-    //     project._id === projectId
-    //       ? { ...project, likes: data.likes }
-    //       : project
-    //   )
-    // }));
     setProjects(prev =>
   prev.map(project =>
     project._id === projectId

@@ -50,10 +50,10 @@ const Signup = () => {
       if (response.ok) {
         console.log('Signup successful, OTP sent:', data);
 
-        // ✅ Save email temporarily so OTP page knows whom to verify
+        // Save email temporarily so OTP page knows whom to verify
         localStorage.setItem("pendingEmail", formData.email);
 
-        // ✅ Redirect directly to verify OTP page
+        // Redirect directly to verify OTP page
         navigate('/verify-otp');
       } else {
         setError(data.error || 'Signup failed. Please try again.');
