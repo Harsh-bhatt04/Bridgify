@@ -1,6 +1,7 @@
 import ConnectionRequest from '../model/connectionRequest.js';
 import User from '../model/userProfile.js';
-
+import '../model/userProfile.js';
+import mongoose from 'mongoose';
 // Send connection request
 // export const sendConnectionRequest = async (req, res) => {
 //   try {
@@ -27,31 +28,52 @@ export const sendConnectionRequest = async (req, res) => {
     const { receiverId } = req.params;
     const senderId = req.user.id;
 
-    if (!senderId) return res.status(401).json({ success: false, message: "Unauthorized" });
-    if (senderId === receiverId)
-      return res.status(400).json({ success: false, message: "You can't connect with yourself" });
+    if (!senderId) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
 
-    const existing = await ConnectionRequest.findOne({ senderId, receiverId });
-    if (existing)
-      return res.status(400).json({ success: false, message: "Request already sent" });
+    if (senderId === receiverId) {
+      return res.status(400).json({
+        success: false,
+        message: "You cannot connect with yourself"
+      });
+    }
+
+    // Check both directions
+    const existingRequest = await ConnectionRequest.findOne({
+      $or: [
+        { senderId, receiverId },
+        { senderId: receiverId, receiverId: senderId }
+      ]
+    });
+
+    if (existingRequest) {
+      return res.status(400).json({
+        success: false,
+        message: "Connection already exists or pending"
+      });
+    }
 
     const request = await ConnectionRequest.create({
       senderId,
       receiverId,
-      status: "pending",
+      status: "pending"
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: "Connection request sent successfully",
-      request,
+      request
     });
+
   } catch (error) {
     console.error("Send Request Error:", error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
   }
 };
-
 // Accept connection request
 // export const acceptConnectionRequest = async (req, res) => {
 //   try {
@@ -178,5 +200,42 @@ export const getPendingRequests = async (req, res) => {
   } catch (error) {
     console.error("Error in getPendingRequests:", error);
     res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+//get all connections for a user
+export const getConnections = async (req, res) => {
+  try {
+
+    const userId = req.user.id;
+
+    const connections = await ConnectionRequest.find({
+      status: "accepted",
+      $or: [
+        { senderId: userId },
+        { receiverId: userId }
+      ]
+    })
+ .populate({ path: "senderId", model: User, select: "username profileImage" })
+.populate({ path: "receiverId", model: User, select: "username profileImage" });
+
+    const users = connections.map(conn => {
+
+      const sender = conn.senderId;
+      const receiver = conn.receiverId;
+
+      // return the OTHER user (not the logged-in one)
+      if (sender._id.toString() === userId) {
+        return receiver;
+      } else {
+        return sender;
+      }
+
+    });
+
+    res.json(users);
+
+  } catch (error) {
+    console.error("Error fetching connections:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };

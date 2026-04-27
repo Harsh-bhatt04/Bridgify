@@ -52,16 +52,30 @@ export const verifyToken = (req, res, next) => {
 // };
 export const authMiddleware = async (req, res, next) => {
   try {
-    const token = req.header("Authorization")?.replace("Bearer ", "");
-    if (!token) return res.status(401).json({ success: false, message: "No token provided" });
+
+    // Check header OR cookie
+    let token = req.header("Authorization")?.replace("Bearer ", "");
+
+    if (!token) {
+      token = req.cookies?.token;
+    }
+
+    if (!token) {
+      return res.status(401).json({ success: false, message: "No token provided" });
+    }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
     const user = await User.findById(decoded.id);
 
-    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
 
     req.user = { id: user._id, username: user.username };
+
     next();
+
   } catch (error) {
     console.error("Auth Error:", error);
     res.status(401).json({ success: false, message: "Invalid or expired token" });

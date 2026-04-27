@@ -133,11 +133,13 @@ export async function handleUserLogin(req, res) {
     });
 
     const userData = {
-      id: user._id,
-      username: user.username,
-      email: user.email,
-      socialHandleLinks: user.socialHandleLinks
-    };
+  id: user._id,
+  username: user.username,
+  email: user.email,
+  socialHandleLinks: user.socialHandleLinks,
+  plan: user.plan,              // 🔥 NEW
+  planExpiresAt: user.planExpiresAt, // 🔥 NEW
+};
 
     res.json({ success: true, message: "Login successful", token, user: userData });
   } catch (error) {

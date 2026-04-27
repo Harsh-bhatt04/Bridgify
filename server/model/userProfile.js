@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema(
     },
     connections: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'UserProfile'
+      ref: "UserProfile",
     },
     profileImage: {
       type: String,
@@ -31,11 +31,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
-    otpExpires: {   // ✅ renamed to match controller
+    otpExpires: {
       type: Date,
       default: null,
     },
-    isVerified: {   // ✅ added this to handle email verification
+    isVerified: {
       type: Boolean,
       default: false,
     },
@@ -55,6 +55,21 @@ const userSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
+
+    // 🔥 NEW: Plan fields
+    plan: {
+      type: String,
+      enum: ["FREE", "GOLD", "PLATINUM", "DIAMOND"],
+      default: "FREE",
+    },
+    planActivatedAt: {
+      type: Date,
+      default: null,
+    },
+    planExpiresAt: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true }
 );

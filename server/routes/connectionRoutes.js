@@ -3,7 +3,8 @@ import {
   sendConnectionRequest,
   acceptConnectionRequest,
   rejectConnectionRequest,
-  getPendingRequests
+  getPendingRequests,
+  getConnections
 } from '../controllers/connectionController.js';
 import {authMiddleware} from '../middlewares/authMiddleware.js';
 
@@ -14,5 +15,6 @@ router.post('/request/:receiverId', authMiddleware, sendConnectionRequest);
 router.post('/accept/:requestId', authMiddleware, acceptConnectionRequest);
 router.post('/reject/:requestId', authMiddleware, rejectConnectionRequest);
 router.get('/pending', authMiddleware, getPendingRequests);
+router.get("/", authMiddleware, getConnections);
 
 export default router;

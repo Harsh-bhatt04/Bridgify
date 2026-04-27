@@ -179,13 +179,19 @@ const Login = () => {
       const data = await response.json();
 
       if (response.ok) {
-        console.log('Login successful:', data);
-        // Store the token (if needed)
-        if (data.token) {
-          localStorage.setItem('token', data.token); // Or use a cookie library
-        }
-        // Navigate to the feed or dashboard
-        navigate('/feed');
+  console.log('Login successful:', data);
+
+  // ✅ SAVE USER + TOKEN (THIS FIXES PAYMENT ISSUE)
+  if (data.user) {
+    localStorage.setItem("user", JSON.stringify(data.user));
+  }
+
+  if (data.token) {
+    localStorage.setItem("token", data.token);
+  }
+
+  navigate('/feed');
+
       } else {
         setError(data.message || 'Login failed. Invalid credentials.');
         console.error('Login error:', data);
